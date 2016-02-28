@@ -1,0 +1,141 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.reynolds.lawrence</groupId>
+	<artifactId>CounterpointSwingAppOriginal</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>CounterpointSwingAppOriginal</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring</artifactId>
+			<version>2.5.6</version>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.mockito</groupId> -->
+<!-- 			<artifactId>mockito-all</artifactId> -->
+<!-- 			<version>1.9.0</version> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.directory.studio</groupId> -->
+<!-- 			<artifactId>org.apache.commons.collections</artifactId> -->
+<!-- 			<version>3.2.1</version> -->
+<!-- 		</dependency> -->
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>commons-collections</groupId> -->
+<!-- 			<artifactId>commons-collections</artifactId> -->
+<!-- 			<version>20040616</version> -->
+<!-- 		</dependency> -->
+	</dependencies>
+	
+		<build>
+		<plugins>
+			<plugin>
+				<!-- Allows entries into the manifest file. Used to add the main class 
+					value which is required to run the app from the command line. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>law.ApplicationController</mainClass>
+						</manifest>
+						<!-- This isn't required now but was used to add the directory holding 
+							the jar to it's classpath. This was so that the spring config file could 
+							be obtained. The file has now been added as a resource so is included in 
+							the jar anyway. -->
+						<!-- <manifestEntries> <Class-Path>.</Class-Path> </manifestEntries> -->
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- This plugin allows all of the dependencies to be included in the 
+					uber jar. The minimizeJar = true in the configuration only includes those 
+					that are used. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<!-- <finalName>uber-${artifactId}-${version}</finalName> -->
+							<finalName>CounterpointSwingAppOriginal</finalName>
+							<minimizeJar>false</minimizeJar>
+							<!-- It seems as though the minimise will remove parts that are still 
+								required, perhaps because they aren't directly in the code but are used behind 
+								the scenes. To include them you add these parts which overrides the minimise 
+								part. -->
+							<filters>
+								<filter>
+									<artifact>log4j:log4j</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+								<filter>
+									<artifact>commons-logging:commons-logging</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+								<filter>
+									<artifact>org.springframework:spring</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<!-- The following are required because by default only the resources folder 
+			will be included in the jar. The spring config is in the config folder so 
+			these are required to include that as well. Without this the config file 
+			would have to be placed outside of the jar inside it's directory and the 
+			<Class-Path>.</Class-Path> used in the manifest plugin above. -->
+		<resources>
+			<resource>
+				<directory>src/main/config</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/</directory>
+			</resource>
+			<resource>
+				<directory>config</directory>
+			</resource>
+		</resources>
+	</build>
+</project>

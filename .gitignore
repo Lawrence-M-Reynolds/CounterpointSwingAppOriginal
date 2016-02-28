@@ -1,0 +1,13 @@
+# Ignore target at the top level
+/target/
+# Ignore child project's targets as well
+/*/target/
+# And any grandchildren ...
+/*/*/target/
+# Or you can do:
+target/
+
+.project
+.classpath
+.settings
+*.log
